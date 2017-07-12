@@ -1,4 +1,4 @@
- #include "Timer.h"
+#include "Timer.h"
 
 #include <OneWire.h> // OneWire kütüphanesini ekliyoruz.
 
@@ -104,9 +104,15 @@ unsigned long long     numberLongLong    = testValue; // 18446744073709551615
 
 Timer t;
 
+bool ekranAktif=true;
+byte uykuSuresi=60;
+byte uykuIcinGecen=0;
 
-
-
+void sleepBool(){
+  if(!ekranAktif){
+  ekranAktif=true;
+  uykuIcinGecen=0;}
+  }
 
 void button(){
 
@@ -137,7 +143,7 @@ if(KisaPress){
     Gecerli_Ekran=0;}else{
   Gecerli_Ekran++;
   }
-
+sleepBool();
   }
 
 if(KisaPress||UzunPress){KisaPress=false;UzunPress=false;ButonBasiliGecenSureMs=0;}
@@ -197,8 +203,11 @@ void zaman()
   {
      previousTime = previousTime + 1000;  // use 100000 for uS
   /*   */ seconds = seconds +1;
+
+  saniyeBasiIslemi();
      if (seconds == 60)
      {
+
         seconds = 0;
         minutes = minutes +1;
      }
@@ -257,10 +266,23 @@ Gecerli_Ekran=0;
 
 }
 
+ void saniyeBasiIslemi()
+{
+if(ekranAktif){uykuIcinGecen++;}
+
+if(uykuSuresi==uykuIcinGecen){ekranAktif=false;Ekran5();}
+
+}
+
+ 
 void loop() {
 
 button();
 
+
+
+
+if(ekranAktif){
 
 switch (Gecerli_Ekran) {
 
@@ -278,8 +300,10 @@ Ekran3();
 break;
 case 3:                
 Ekran4();
+
 break;
 
+}
 }
 
  
@@ -354,7 +378,7 @@ HCuOLED.Print("SICAKLIK");
  float temperature = getTemp();
   // Sensörden gelen sıcaklık değerini Serial monitörde yazdırıyoruz.
 //  Serial.print("Sicaklik: ");
-//  Serial.println(temperature);
+Serial.println(temperature);
 
   
 // float sicaklik =  ( analogRead(TEMPERATURE_PIN) / 9.31 );
@@ -363,7 +387,7 @@ HCuOLED.Print("SICAKLIK");
  
 HCuOLED.Cursor(4,20);
 HCuOLED.SetFont(MedProp_11pt);
-HCuOLED.Print(temperature);
+HCuOLED.Print(temperature, 4, 1);  
 HCuOLED.Refresh();     
 
  
@@ -496,28 +520,11 @@ HCuOLED.SetFont(MedProp_11pt);
 HCuOLED.Print(SaniyeOrtalamaBaloncukAdet);
 HCuOLED.Refresh();     
 }
-/*void Ekran5()
-{
-
-void Time(long val){  
-int days = elapsedDays(val);
-int hours = numberOfHours(val);
-int minutes = numberOfMinutes(val);
-int seconds = numberOfSeconds(val);
-
-  String t2;
- // digital clock display of current time
- String tt = String(days,DEC) ;
-
- t2=printDigits(hours);
-  tt.concat(t2);
- //String(printDigits(minutes)) +  String(printDigits(seconds))  ;  
-
- HCuOLED.ClearBuffer(); 
-HCuOLED.Cursor(16,3);
+void Ekran5()
+{HCuOLED.ClearBuffer(); 
+HCuOLED.Cursor(3,3);
 HCuOLED.SetFont(Terminal_8pt);
-HCuOLED.Print(tt);
+HCuOLED.Print("kapali");
 
-HCuOLED.Refresh();
+HCuOLED.Refresh();     
 }
-*/
